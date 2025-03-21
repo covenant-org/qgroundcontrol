@@ -182,6 +182,25 @@ Item {
                     qsTr("Deadband can also be adjusted by clicking and ") +
                     qsTr("dragging vertically on the corresponding axis monitor.")
         }
+
+        //-----------------------------------------------------------------
+        //-- Command Factor
+        QGCLabel {
+            text:               qsTr("Command Factor")
+            Layout.alignment:   Qt.AlignVCenter
+            visible:            advancedSettings.checked
+        }
+        QGCTextField {
+            text:               _activeJoystick.commandFactor
+            enabled:            advancedSettings.checked
+            validator:          DoubleValidator { bottom: _activeJoystick.minCommandFactor; top: _activeJoystick.maxCommandFactor; }
+            inputMethodHints:   Qt.ImhFormattedNumbersOnly
+            Layout.alignment:   Qt.AlignVCenter
+            onEditingFinished: {
+                _activeJoystick.commandFactor = parseFloat(text)
+            }
+            visible:            advancedSettings.checked
+        }
     }
 }
 

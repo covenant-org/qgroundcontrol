@@ -113,6 +113,7 @@ public:
     Q_PROPERTY(float    exponential             READ exponential            WRITE setExponential        NOTIFY exponentialChanged)
     Q_PROPERTY(bool     accumulator             READ accumulator            WRITE setAccumulator        NOTIFY accumulatorChanged)
     Q_PROPERTY(bool     circleCorrection        READ circleCorrection       WRITE setCircleCorrection   NOTIFY circleCorrectionChanged)
+    Q_PROPERTY(float    commandFactor           READ commandFactor          WRITE setCommandFactor      NOTIFY commandFactorChanged)
 
     Q_INVOKABLE void    setButtonRepeat     (int button, bool repeat);
     Q_INVOKABLE bool    getButtonRepeat     (int button);
@@ -168,6 +169,9 @@ public:
     bool  circleCorrection  () const;
     void  setCircleCorrection(bool circleCorrection);
 
+    float  commandFactor  () const;
+    void  setCommandFactor(float commandFactor);
+
     void  setTXMode         (int mode);
     int   getTXMode         () { return _transmitterMode; }
 
@@ -197,6 +201,7 @@ signals:
     void accumulatorChanged         (bool accumulator);
     void enabledChanged             (bool enabled);
     void circleCorrectionChanged    (bool circleCorrection);
+    void commandFactorChanged       (float commandFactor);
     void axisValues                 (float roll, float pitch, float yaw, float throttle);
 
     void axisFrequencyHzChanged     ();
@@ -275,6 +280,7 @@ protected:
     bool    _accumulator            = false;
     bool    _deadband               = false;
     bool    _circleCorrection       = true;
+    float    _commandFactor         = 100;
     float   _axisFrequencyHz        = _defaultAxisFrequencyHz;
     float   _buttonFrequencyHz      = _defaultButtonFrequencyHz;
     Vehicle* _activeVehicle         = nullptr;
@@ -304,6 +310,8 @@ protected:
     static const float  _maxAxisFrequencyHz;
     static const float  _minButtonFrequencyHz;
     static const float  _maxButtonFrequencyHz;
+    static const float  _minCommandFactor;
+    static const float  _maxCommandFactor;
 
 private:
     static const char*  _rgFunctionSettingsKey[maxFunction];
@@ -318,6 +326,7 @@ private:
     static const char* _accumulatorSettingsKey;
     static const char* _deadbandSettingsKey;
     static const char* _circleCorrectionSettingsKey;
+    static const char* _commandFactorSettingsKey;
     static const char* _axisFrequencySettingsKey;
     static const char* _buttonFrequencySettingsKey;
     static const char* _txModeSettingsKey;

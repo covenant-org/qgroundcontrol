@@ -33,6 +33,7 @@ const char* Joystick::_exponentialSettingsKey =         "Exponential";
 const char* Joystick::_accumulatorSettingsKey =         "Accumulator";
 const char* Joystick::_deadbandSettingsKey =            "Deadband";
 const char* Joystick::_circleCorrectionSettingsKey =    "Circle_Correction";
+const char* Joystick::_commandFactorSettingsKey =       "Command_Factor";
 const char* Joystick::_axisFrequencySettingsKey =       "AxisFrequency";
 const char* Joystick::_buttonFrequencySettingsKey =     "ButtonFrequency";
 const char* Joystick::_txModeSettingsKey =              nullptr;
@@ -90,6 +91,8 @@ const float Joystick::_minAxisFrequencyHz       = 0.25f;
 const float Joystick::_maxAxisFrequencyHz       = 200.0f;
 const float Joystick::_minButtonFrequencyHz     = 0.25f;
 const float Joystick::_maxButtonFrequencyHz     = 50.0f;
+const float Joystick::_minCommandFactor         = 0.0;
+const float Joystick::_maxCommandFactor         = 100.0f;
 
 AssignedButtonAction::AssignedButtonAction(QObject* parent, const QString name)
     : QObject(parent)
@@ -266,12 +269,13 @@ void Joystick::_loadSettings()
     _buttonFrequencyHz  = settings.value(_buttonFrequencySettingsKey,   _defaultButtonFrequencyHz).toFloat();
     _circleCorrection   = settings.value(_circleCorrectionSettingsKey,  false).toBool();
     _negativeThrust     = settings.value(_negativeThrustSettingsKey,    false).toBool();
+    _commandFactor      = settings.value(_commandFactorSettingsKey,   100).toFloat();
 
 
     _throttleMode   = static_cast<ThrottleMode_t>(settings.value(_throttleModeSettingsKey, ThrottleModeDownZero).toInt(&convertOk));
     badSettings |= !convertOk;
 
-    qCDebug(JoystickLog) << "_loadSettings calibrated:txmode:throttlemode:exponential:deadband:badsettings" << _calibrated << _transmitterMode << _throttleMode << _exponential << _deadband << badSettings;
+    qCDebug(JoystickLog) << "_loadSettings calibrated:txmode:throttlemode:exponential:deadband:badsettings" << _calibrated << _transmitterMode << _throttleMode << _exponential << _deadband << _commandFactor << badSettings;
 
     QString minTpl      ("Axis%1Min");
     QString maxTpl      ("Axis%1Max");
@@ -372,8 +376,9 @@ void Joystick::_saveSettings()
     settings.setValue(_throttleModeSettingsKey,     _throttleMode);
     settings.setValue(_negativeThrustSettingsKey,   _negativeThrust);
     settings.setValue(_circleCorrectionSettingsKey, _circleCorrection);
+    settings.setValue(_commandFactorSettingsKey,    _commandFactor);
 
-    qCDebug(JoystickLog) << "_saveSettings calibrated:throttlemode:deadband:txmode" << _calibrated << _throttleMode << _deadband << _circleCorrection << _transmitterMode;
+    qCDebug(JoystickLog) << "_saveSettings calibrated:throttlemode:deadband:txmode" << _calibrated << _throttleMode << _deadband << _circleCorrection << _commandFactor << _transmitterMode;
 
     QString minTpl      ("Axis%1Min");
     QString maxTpl      ("Axis%1Max");
@@ -705,6 +710,8 @@ void Joystick::_handleAxis()
                     buttonPressedBits |= buttonBit;
                 }
             }
+
+            throttle = throttle * (_commandFactor / 100);
             emit axisValues(roll, pitch, yaw, throttle);
 
             uint16_t shortButtons = static_cast<uint16_t>(buttonPressedBits & 0xFFFF);
@@ -981,6 +988,18 @@ void Joystick::setCircleCorrection(bool circleCorrection)
     _circleCorrection = circleCorrection;
     _saveSettings();
     emit circleCorrectionChanged(_circleCorrection);
+}
+
+float Joystick::commandFactor() const
+{
+    return _commandFactor;
+}
+
+void Joystick::setCommandFactor(float commandFactor)
+{
+    _commandFactor = commandFactor;
+    _saveSettings();
+    emit commandFactorChanged(_commandFactor);
 }
 
 void Joystick::setAxisFrequency(float val)

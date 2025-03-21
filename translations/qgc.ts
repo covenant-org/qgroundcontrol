@@ -8442,6 +8442,11 @@ Click Ok to start the auto-tuning process.
         <source>dragging vertically on the corresponding axis monitor.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../src/VehicleSetup/JoystickConfigAdvanced.qml" line="189"/>
+        <source>Command Factor</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>JoystickConfigButtons</name>
