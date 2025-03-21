@@ -65,7 +65,8 @@ cp ${QGC_CUSTOM_LINUX_START_SH} ${APPDIR}/AppRun
 # copy icon
 cp ${QGC_CUSTOM_APP_ICON} ${APPDIR}/
 
-cat > ./QGroundControl.desktop <<\EOF
+cd ${APPDIR}
+cat > ./QGroundControl.desktop <<EOF
 [Desktop Entry]
 Type=Application
 Name=${QGC_CUSTOM_APP_NAME}
@@ -85,9 +86,20 @@ echo ${QGC_CUSTOM_APP_NAME} Version: ${VERSION}
 cd ${TMPDIR}
 wget -c --quiet "https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage"
 chmod a+x ./appimagetool-x86_64.AppImage
+wget -c --quiet "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
+chmod a+x ./linuxdeploy-x86_64.AppImage
+
+./linuxdeploy-x86_64.AppImage \
+  --appdir ./$APP.AppDir \
+  --executable ./$APP.AppDir/$APP \
+  --desktop-file ./$APP.AppDir/QGroundControl.desktop \
+  --icon-file ./$APP.AppDir/qgroundcontrol.png \
+  --custom-apprun /home/eduardo/projects/uav/qgroundcontrol/deploy/qgroundcontrol-start.sh
 
 ./appimagetool-x86_64.AppImage ./$APP.AppDir/ ${TMPDIR}/$APP".AppImage"
 
 mkdir -p ${OUTPUT_DIR}
+# echo $APP
+# echo ${TMPDIR}/$APP".AppImage"
 cp ${TMPDIR}/$APP".AppImage" ${OUTPUT_DIR}/$APP".AppImage"
 
