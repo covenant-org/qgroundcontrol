@@ -182,6 +182,25 @@ Item {
                     qsTr("Deadband can also be adjusted by clicking and ") +
                     qsTr("dragging vertically on the corresponding axis monitor.")
         }
+
+        //-----------------------------------------------------------------
+        //-- Throttle Factor
+        QGCLabel {
+            text:               qsTr("Throttle Factor")
+            Layout.alignment:   Qt.AlignVCenter
+            visible:            advancedSettings.checked
+        }
+        QGCTextField {
+            text:               _activeJoystick.throttleFactor
+            enabled:            advancedSettings.checked
+            validator:          DoubleValidator { bottom: 0.0; top: 100.0; }
+            inputMethodHints:   Qt.ImhFormattedNumbersOnly
+            Layout.alignment:   Qt.AlignVCenter
+            onEditingFinished: {
+                _activeJoystick.throttleFactor = parseFloat(text)
+            }
+            visible:            advancedSettings.checked
+        }
     }
 }
 

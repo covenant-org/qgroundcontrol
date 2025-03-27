@@ -210,12 +210,13 @@ void Joystick::_loadSettings()
     _axisFrequencyHz = settings.value(_axisFrequencySettingsKey, _defaultAxisFrequencyHz).toFloat(&convertOk);
     _buttonFrequencyHz = settings.value(_buttonFrequencySettingsKey, _defaultButtonFrequencyHz).toFloat(&convertOk);
     _circleCorrection  = settings.value(_circleCorrectionSettingsKey, false).toBool();
+    _throttleFactor  = settings.value(_throttleFactorSettingsKey, 100.0f).toFloat(&convertOk);
     _negativeThrust = settings.value(_negativeThrustSettingsKey, false).toBool();
     _throttleMode = static_cast<ThrottleMode_t>(settings.value(_throttleModeSettingsKey, ThrottleModeDownZero).toInt(&convertOk));
 
     badSettings |= !convertOk;
 
-    qCDebug(JoystickLog) << Q_FUNC_INFO << "calibrated:txmode:throttlemode:exponential:deadband:badsettings" << _calibrated << _transmitterMode << _throttleMode << _exponential << _deadband << badSettings;
+    qCDebug(JoystickLog) << Q_FUNC_INFO << "calibrated:txmode:throttlemode:exponential:deadband:throttlefactor:badsettings" << _calibrated << _transmitterMode << _throttleMode << _exponential << _deadband << _throttleFactor << badSettings;
 
     const QString minTpl("Axis%1Min");
     const QString maxTpl("Axis%1Max");
@@ -324,8 +325,9 @@ void Joystick::_saveSettings()
     settings.setValue(_throttleModeSettingsKey, _throttleMode);
     settings.setValue(_negativeThrustSettingsKey, _negativeThrust);
     settings.setValue(_circleCorrectionSettingsKey, _circleCorrection);
+    settings.setValue(_throttleFactorSettingsKey, _throttleFactor);
 
-    qCDebug(JoystickLog) << Q_FUNC_INFO << "calibrated:throttlemode:deadband:txmode" << _calibrated << _throttleMode << _deadband << _circleCorrection << _transmitterMode;
+    qCDebug(JoystickLog) << Q_FUNC_INFO << "calibrated:throttlemode:deadband:txmode:throttlefactor" << _calibrated << _throttleMode << _deadband << _circleCorrection << _transmitterMode << _throttleFactor;
 
     const QString minTpl("Axis%1Min");
     const QString maxTpl("Axis%1Max");
@@ -658,6 +660,7 @@ void Joystick::_handleAxis()
         throttle = (throttle + 1.0f) / 2.0f;
     }
 
+    throttle = throttle * (_throttleFactor / 100.0f);
     qCDebug(JoystickValuesLog) << "name:roll:pitch:yaw:throttle:gimbalPitch:gimbalYaw" << name() << roll << -pitch << yaw << throttle << gimbalPitch << gimbalYaw;
 
     // NOTE: The buttonPressedBits going to MANUAL_CONTROL are currently used by ArduSub (and it only handles 16 bits)
@@ -903,6 +906,18 @@ void Joystick::setThrottleMode(int mode)
         _saveSettings();
         emit throttleModeChanged(_throttleMode);
     }
+}
+
+void Joystick::setThrottleFactor(float throttleFactor)
+{
+    if (throttleFactor < _minThrottleFactor || throttleFactor > _maxThrottleFactor) {
+        qCWarning(JoystickLog) << "Invalid throttle factor" << throttleFactor;
+        return;
+    }
+
+    _throttleFactor = throttleFactor;
+    _saveSettings();
+    emit throttleModeChanged(_throttleFactor);
 }
 
 void Joystick::setNegativeThrust(bool allowNegative)
