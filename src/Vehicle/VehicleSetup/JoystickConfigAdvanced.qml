@@ -201,6 +201,63 @@ Item {
             }
             visible:            advancedSettings.checked
         }
+
+        //-----------------------------------------------------------------
+        //-- Yaw Factor
+        QGCLabel {
+            text:               qsTr("Yaw Factor")
+            Layout.alignment:   Qt.AlignVCenter
+            visible:            advancedSettings.checked
+        }
+        QGCTextField {
+            text:               _activeJoystick.yawFactor
+            enabled:            advancedSettings.checked
+            validator:          DoubleValidator { bottom: 0.0; top: 100.0; }
+            inputMethodHints:   Qt.ImhFormattedNumbersOnly
+            Layout.alignment:   Qt.AlignVCenter
+            onEditingFinished: {
+                _activeJoystick.yawFactor = parseFloat(text)
+            }
+            visible:            advancedSettings.checked
+        }
+
+        //-----------------------------------------------------------------
+        //-- Pitch Factor
+        QGCLabel {
+            text:               qsTr("Pitch Factor")
+            Layout.alignment:   Qt.AlignVCenter
+            visible:            advancedSettings.checked
+        }
+        QGCTextField {
+            text:               _activeJoystick.pitchFactor
+            enabled:            advancedSettings.checked
+            validator:          DoubleValidator { bottom: 0.0; top: 100.0; }
+            inputMethodHints:   Qt.ImhFormattedNumbersOnly
+            Layout.alignment:   Qt.AlignVCenter
+            onEditingFinished: {
+                _activeJoystick.pitchFactor = parseFloat(text)
+            }
+            visible:            advancedSettings.checked
+        }
+
+        //-----------------------------------------------------------------
+        //-- Roll Factor
+        QGCLabel {
+            text:               qsTr("Roll Factor")
+            Layout.alignment:   Qt.AlignVCenter
+            visible:            advancedSettings.checked
+        }
+        QGCTextField {
+            text:               _activeJoystick.rollFactor
+            enabled:            advancedSettings.checked
+            validator:          DoubleValidator { bottom: 0.0; top: 100.0; }
+            inputMethodHints:   Qt.ImhFormattedNumbersOnly
+            Layout.alignment:   Qt.AlignVCenter
+            onEditingFinished: {
+                _activeJoystick.rollFactor = parseFloat(text)
+            }
+            visible:            advancedSettings.checked
+        }
     }
 }
 

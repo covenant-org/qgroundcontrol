@@ -76,6 +76,9 @@ class Joystick : public QThread
     Q_PROPERTY(float                    minButtonFrequencyHz    MEMBER  _minButtonFrequencyHz                               CONSTANT)
     Q_PROPERTY(int                      axisCount               READ    axisCount                                           CONSTANT)
     Q_PROPERTY(float                    throttleFactor          READ    throttleFactor          WRITE setThrottleFactor     NOTIFY throttleFactorChanged)
+    Q_PROPERTY(float                    yawFactor               READ    yawFactor               WRITE setYawFactor          NOTIFY yawFactorChanged)
+    Q_PROPERTY(float                    pitchFactor             READ    pitchFactor             WRITE setPitchFactor        NOTIFY pitchFactorChanged)
+    Q_PROPERTY(float                    rollFactor              READ    rollFactor              WRITE setRollFactor         NOTIFY rollFactorChanged)
     Q_PROPERTY(int                      throttleMode            READ    throttleMode            WRITE setThrottleMode       NOTIFY throttleModeChanged)
     Q_PROPERTY(int                      totalButtonCount        READ    totalButtonCount                                    CONSTANT)
     Q_PROPERTY(const QmlObjectListModel *assignableActions      READ    assignableActions                                   NOTIFY assignableActionsChanged)
@@ -171,6 +174,15 @@ public:
     float throttleFactor() const { return _throttleFactor; }
     void setThrottleFactor(float throttleFactor);
 
+    float yawFactor() const { return _yawFactor; }
+    void setYawFactor(float yawFactor);
+
+    float pitchFactor() const { return _pitchFactor; }
+    void setPitchFactor(float pitchFactor);
+
+    float rollFactor() const { return _rollFactor; }
+    void setRollFactor(float rollFactor);
+
     int getTXMode() const { return _transmitterMode; }
     void setTXMode(int mode);
 
@@ -201,6 +213,9 @@ signals:
     void enabledChanged(bool enabled);
     void circleCorrectionChanged(bool circleCorrection);
     void throttleFactorChanged(float throttleFactor);
+    void yawFactorChanged(float yawFactor);
+    void pitchFactorChanged(float pitchFactor);
+    void rollFactorChanged(float rollFactor);
     void axisValues(float roll, float pitch, float yaw, float throttle);
     void axisFrequencyHzChanged();
     void buttonFrequencyHzChanged();
@@ -287,6 +302,9 @@ private:
     bool _calibrationMode = false;
     bool _circleCorrection = true;
     float _throttleFactor = 100.0f;
+    float _yawFactor = 100.0f;
+    float _pitchFactor = 100.0f;
+    float _rollFactor = 100.0f;
     bool _deadband = false;
     bool _negativeThrust = false;
     bool _pollingStartedForCalibration = false;
@@ -334,6 +352,9 @@ private:
     static constexpr const char *_deadbandSettingsKey =            "Deadband";
     static constexpr const char *_circleCorrectionSettingsKey =    "Circle_Correction";
     static constexpr const char *_throttleFactorSettingsKey =      "Throttle_Factor";
+    static constexpr const char *_yawFactorSettingsKey =           "Yaw_Factor";
+    static constexpr const char *_pitchFactorSettingsKey =         "Pitch_Factor";
+    static constexpr const char *_rollFactorSettingsKey =          "Roll_Factor";
     static constexpr const char *_axisFrequencySettingsKey =       "AxisFrequency";
     static constexpr const char *_buttonFrequencySettingsKey =     "ButtonFrequency";
     static constexpr const char *_fixedWingTXModeSettingsKey =     "TXMode_FixedWing";

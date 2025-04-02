@@ -211,12 +211,15 @@ void Joystick::_loadSettings()
     _buttonFrequencyHz = settings.value(_buttonFrequencySettingsKey, _defaultButtonFrequencyHz).toFloat(&convertOk);
     _circleCorrection  = settings.value(_circleCorrectionSettingsKey, false).toBool();
     _throttleFactor  = settings.value(_throttleFactorSettingsKey, 100.0f).toFloat(&convertOk);
+    _yawFactor  = settings.value(_yawFactorSettingsKey, 100.0f).toFloat(&convertOk);
+    _pitchFactor  = settings.value(_pitchFactorSettingsKey, 100.0f).toFloat(&convertOk);
+    _rollFactor  = settings.value(_rollFactorSettingsKey, 100.0f).toFloat(&convertOk);
     _negativeThrust = settings.value(_negativeThrustSettingsKey, false).toBool();
     _throttleMode = static_cast<ThrottleMode_t>(settings.value(_throttleModeSettingsKey, ThrottleModeDownZero).toInt(&convertOk));
 
     badSettings |= !convertOk;
 
-    qCDebug(JoystickLog) << Q_FUNC_INFO << "calibrated:txmode:throttlemode:exponential:deadband:throttlefactor:badsettings" << _calibrated << _transmitterMode << _throttleMode << _exponential << _deadband << _throttleFactor << badSettings;
+    qCDebug(JoystickLog) << Q_FUNC_INFO << "calibrated:txmode:throttlemode:exponential:deadband:throttlefactor:yawfactor:pitchfactor:rollfactor:badsettings" << _calibrated << _transmitterMode << _throttleMode << _exponential << _deadband << _throttleFactor << _yawFactor << _pitchFactor << _rollFactor << badSettings;
 
     const QString minTpl("Axis%1Min");
     const QString maxTpl("Axis%1Max");
@@ -326,8 +329,11 @@ void Joystick::_saveSettings()
     settings.setValue(_negativeThrustSettingsKey, _negativeThrust);
     settings.setValue(_circleCorrectionSettingsKey, _circleCorrection);
     settings.setValue(_throttleFactorSettingsKey, _throttleFactor);
+    settings.setValue(_yawFactorSettingsKey, _yawFactor);
+    settings.setValue(_pitchFactorSettingsKey, _pitchFactor);
+    settings.setValue(_rollFactorSettingsKey, _rollFactor);
 
-    qCDebug(JoystickLog) << Q_FUNC_INFO << "calibrated:throttlemode:deadband:txmode:throttlefactor" << _calibrated << _throttleMode << _deadband << _circleCorrection << _transmitterMode << _throttleFactor;
+    qCDebug(JoystickLog) << Q_FUNC_INFO << "calibrated:throttlemode:deadband:txmode:throttlefactor:yawfactor:pitchfactor:rollfactor" << _calibrated << _throttleMode << _deadband << _circleCorrection << _transmitterMode << _throttleFactor << _yawFactor << _pitchFactor << _rollFactor;
 
     const QString minTpl("Axis%1Min");
     const QString maxTpl("Axis%1Max");
@@ -661,6 +667,9 @@ void Joystick::_handleAxis()
     }
 
     throttle = throttle * (_throttleFactor / 100.0f);
+    yaw = yaw * (_yawFactor / 100.0f);
+    pitch = pitch * (_pitchFactor / 100.0f);
+    roll = roll * (_rollFactor / 100.0f);
     qCDebug(JoystickValuesLog) << "name:roll:pitch:yaw:throttle:gimbalPitch:gimbalYaw" << name() << roll << -pitch << yaw << throttle << gimbalPitch << gimbalYaw;
 
     // NOTE: The buttonPressedBits going to MANUAL_CONTROL are currently used by ArduSub (and it only handles 16 bits)
@@ -917,7 +926,44 @@ void Joystick::setThrottleFactor(float throttleFactor)
 
     _throttleFactor = throttleFactor;
     _saveSettings();
-    emit throttleModeChanged(_throttleFactor);
+    emit throttleFactorChanged(_throttleFactor);
+}
+
+void Joystick::setYawFactor(float yawFactor)
+{
+    if (yawFactor < _minThrottleFactor || yawFactor > _maxThrottleFactor) {
+        qCWarning(JoystickLog) << "Invalid throttle factor" << yawFactor;
+        return;
+    }
+
+    _yawFactor = yawFactor;
+    _saveSettings();
+    emit yawFactorChanged(_throttleFactor);
+}
+
+void Joystick::setPitchFactor(float pitchFactor)
+{
+    if (pitchFactor < _minThrottleFactor || pitchFactor > _maxThrottleFactor) {
+        qCWarning(JoystickLog) << "Invalid pitch factor" << pitchFactor;
+        return;
+    }
+
+    _pitchFactor = pitchFactor;
+    _saveSettings();
+    emit pitchFactorChanged(_pitchFactor);
+}
+
+
+void Joystick::setRollFactor(float rollFactor)
+{
+    if (rollFactor < _minThrottleFactor || rollFactor > _maxThrottleFactor) {
+        qCWarning(JoystickLog) << "Invalid roll factor" << rollFactor;
+        return;
+    }
+
+    _rollFactor = rollFactor;
+    _saveSettings();
+    emit rollFactorChanged(_rollFactor);
 }
 
 void Joystick::setNegativeThrust(bool allowNegative)
