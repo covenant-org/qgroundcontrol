@@ -312,6 +312,8 @@ private:
     float _buttonFrequencyHz = _defaultButtonFrequencyHz;
     float _exponential = 0;
     int _rgFunctionAxis[maxFunction] = {};
+    bool _holdHeight = false;
+    float _lastThrottleValue = 0.0f;
     QElapsedTimer _axisTime;
     QList<AssignedButtonAction*> _buttonActionArray;
     QStringList _availableActionTitles;
@@ -393,4 +395,6 @@ private:
     static constexpr const char *_buttonActionGripperRelease =     QT_TR_NOOP("Gripper Open");
     static constexpr const char *_buttonActionLandingGearDeploy=   QT_TR_NOOP("Landing gear deploy");
     static constexpr const char *_buttonActionLandingGearRetract=  QT_TR_NOOP("Landing gear retract");
+    static constexpr const char *_buttonActionHoldVehicleHeight =  QT_TR_NOOP("Hold Vehicle Height");
+    static constexpr const char *_buttonAction90DegreeRightTurn =  QT_TR_NOOP("90 Degree Right Turn");
 };

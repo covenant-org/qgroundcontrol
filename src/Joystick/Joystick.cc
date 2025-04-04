@@ -666,7 +666,16 @@ void Joystick::_handleAxis()
         throttle = (throttle + 1.0f) / 2.0f;
     }
 
-    throttle = throttle * (_throttleFactor / 100.0f);
+    if (_holdHeight) {
+        throttle = 0.5f;
+    } else {
+        const float upperThreshold = 1.00f / 100.00f * 55.00f;
+        // qCInfo(JoystickValuesLog) << "name:threshold" << upperThreshold << name();
+        // only appy factor if we're "trying" to go up
+        if (throttle > upperThreshold) {
+                throttle = throttle * (_throttleFactor / 100.0f);
+        }
+    }
     yaw = yaw * (_yawFactor / 100.0f);
     pitch = pitch * (_pitchFactor / 100.0f);
     roll = roll * (_rollFactor / 100.0f);
@@ -682,6 +691,7 @@ void Joystick::_handleAxis()
         }
     }
 
+    // qCInfo(JoystickValuesLog) << "name:hold_height:throttle" << _holdHeight << throttle << name();
     emit axisValues(roll, pitch, yaw, throttle);
 
     const uint16_t shortButtons = static_cast<uint16_t>(buttonPressedBits & 0xFFFF);
@@ -1167,6 +1177,14 @@ void Joystick::_executeButtonAction(const QString &action, bool buttonDown)
         if (buttonDown) {
             emit landingGearRetract();
         }
+    } else if (action == _buttonActionHoldVehicleHeight) {
+        if (buttonDown) {
+            _holdHeight = !_holdHeight;
+        }
+    } else if (action == _buttonAction90DegreeRightTurn) {
+        if (buttonDown) {
+            // TODO: connect
+        }
     } else {
         if (buttonDown && _activeVehicle) {
             emit unknownAction(action);
@@ -1257,6 +1275,8 @@ void Joystick::_buildActionList(Vehicle *activeVehicle)
     _assignableButtonActions->append(new AssignableButtonAction(_buttonActionGripperRelease));
     _assignableButtonActions->append(new AssignableButtonAction(_buttonActionLandingGearDeploy));
     _assignableButtonActions->append(new AssignableButtonAction(_buttonActionLandingGearRetract));
+    _assignableButtonActions->append(new AssignableButtonAction(_buttonActionHoldVehicleHeight));
+    _assignableButtonActions->append(new AssignableButtonAction(_buttonAction90DegreeRightTurn));
 
     const auto customActions = QGCCorePlugin::instance()->joystickActions();
     for (const auto &action : customActions) {
