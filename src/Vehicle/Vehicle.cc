@@ -2315,6 +2315,21 @@ void Vehicle::emergencyStop()
                 21196.0f);  // Magic number for emergency stop
 }
 
+void Vehicle::rotateNDegrees(float degrees)
+{
+    sendMavCommand(
+                _defaultComponentId,
+                MAV_CMD_DO_REPOSITION,
+                true,        // show error if fails
+                -1.0f, // speed, default is -1
+                MAV_DO_REPOSITION_FLAGS_CHANGE_MODE, // bitmaks flags
+                0.0f, // radius
+                degrees,
+                NAN, // latitude
+                NAN, // longitude
+                NAN); // altitude
+}
+
 void Vehicle::landingGearDeploy()
 {
     sendMavCommand(

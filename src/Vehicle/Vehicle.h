@@ -348,6 +348,9 @@ public:
     /// Command vehicle to kill all motors no matter what state
     Q_INVOKABLE void emergencyStop();
 
+    /// Command to rotate a vehicle in its yaw component n degrees
+    Q_INVOKABLE void rotateNDegrees(float degrees);
+
     /// Command vehicle to abort landing
     Q_INVOKABLE void abortLanding(double climbOutAltitude);
 

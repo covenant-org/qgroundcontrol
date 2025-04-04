@@ -715,6 +715,7 @@ void Joystick::startPolling(Vehicle* vehicle)
             (void) disconnect(this, &Joystick::gripperAction, _activeVehicle, &Vehicle::setGripperAction);
             (void) disconnect(this, &Joystick::landingGearDeploy, _activeVehicle, &Vehicle::landingGearDeploy);
             (void) disconnect(this, &Joystick::landingGearRetract, _activeVehicle, &Vehicle::landingGearRetract);
+            (void) disconnect(this, &Joystick::rotateNDegrees, _activeVehicle, &Vehicle::rotateNDegrees);
             (void) disconnect(_activeVehicle, &Vehicle::flightModesChanged, this, &Joystick::_flightModesChanged);
         }
 
@@ -745,6 +746,7 @@ void Joystick::startPolling(Vehicle* vehicle)
             (void) connect(this, &Joystick::gripperAction, _activeVehicle, &Vehicle::setGripperAction);
             (void) connect(this, &Joystick::landingGearDeploy, _activeVehicle, &Vehicle::landingGearDeploy);
             (void) connect(this, &Joystick::landingGearRetract, _activeVehicle, &Vehicle::landingGearRetract);
+            (void) connect(this, &Joystick::rotateNDegrees, _activeVehicle, &Vehicle::rotateNDegrees);
             (void) connect(_activeVehicle, &Vehicle::flightModesChanged, this, &Joystick::_flightModesChanged);
         }
     }
@@ -775,6 +777,7 @@ void Joystick::stopPolling()
         (void) disconnect(this, &Joystick::gripperAction, _activeVehicle, &Vehicle::setGripperAction);
         (void) disconnect(this, &Joystick::landingGearDeploy, _activeVehicle, &Vehicle::landingGearDeploy);
         (void) disconnect(this, &Joystick::landingGearRetract, _activeVehicle, &Vehicle::landingGearRetract);
+        (void) disconnect(this, &Joystick::rotateNDegrees, _activeVehicle, &Vehicle::rotateNDegrees);
         (void) disconnect(_activeVehicle, &Vehicle::flightModesChanged, this, &Joystick::_flightModesChanged);
         _activeVehicle = nullptr;
     }
@@ -1183,7 +1186,7 @@ void Joystick::_executeButtonAction(const QString &action, bool buttonDown)
         }
     } else if (action == _buttonAction90DegreeRightTurn) {
         if (buttonDown) {
-            // TODO: connect
+            emit rotateNDegrees(90);
         }
     } else {
         if (buttonDown && _activeVehicle) {

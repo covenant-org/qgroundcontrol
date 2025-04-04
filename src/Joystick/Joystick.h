@@ -217,6 +217,7 @@ signals:
     void pitchFactorChanged(float pitchFactor);
     void rollFactorChanged(float rollFactor);
     void axisValues(float roll, float pitch, float yaw, float throttle);
+    void rotateNDegrees(float degrees);
     void axisFrequencyHzChanged();
     void buttonFrequencyHzChanged();
     void startContinuousZoom(int direction);
@@ -313,7 +314,6 @@ private:
     float _exponential = 0;
     int _rgFunctionAxis[maxFunction] = {};
     bool _holdHeight = false;
-    float _lastThrottleValue = 0.0f;
     QElapsedTimer _axisTime;
     QList<AssignedButtonAction*> _buttonActionArray;
     QStringList _availableActionTitles;
